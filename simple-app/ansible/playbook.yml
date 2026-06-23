@@ -1,0 +1,7 @@
+---
+- name: Deploy Simple App
+  hosts: webservers
+  become: yes
+  roles:
+    - docker
+    - app

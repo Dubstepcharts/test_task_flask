@@ -1,0 +1,21 @@
+---
+- name: Create app directory
+  file:
+    path: /opt/simple-app
+    state: directory
+    mode: '0755'
+
+- name: Copy application files
+  synchronize:
+    src: ../../
+    dest: /opt/simple-app
+    rsync_opts:
+      - "--exclude=.git"
+      - "--exclude=ansible"
+      - "--exclude=.github"
+
+- name: Start application with docker-compose
+  docker_compose:
+    project_src: /opt/simple-app
+    state: present
+    restarted: yes
