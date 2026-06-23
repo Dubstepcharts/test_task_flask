@@ -1,20 +1,15 @@
-# Используем официальный образ Python
 FROM python:3.11-slim
 
-# Устанавливаем рабочую директорию в контейнере
 WORKDIR /app
 
-# Копируем файл с зависимостями
 COPY app/requirements.txt .
-
-# Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем весь код приложения
 COPY app/ .
 
-# Открываем порт 5000
 EXPOSE 5000
 
-# Команда для запуска приложения
-CMD ["python", "main.py"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:5000/health || exit 1
+
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
